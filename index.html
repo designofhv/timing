@@ -3,471 +3,471 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Attendance Tracker</title>
+<title>Gemini WorkSync</title>
+<!-- Google Fonts for a premium look -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Tailwind CSS for rapid modern styling -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+        colors: {
+          darkBg: '#09090b',
+          cardBg: '#18181b',
+          cardBorder: '#27272a',
+          primary: '#0ea5e9',
+          primaryGlow: 'rgba(14, 165, 233, 0.4)',
+          success: '#10b981',
+          warning: '#f59e0b',
+          danger: '#ef4444'
+        },
+        boxShadow: {
+          'neon': '0 0 20px rgba(14, 165, 233, 0.3)',
+          'neon-success': '0 0 20px rgba(16, 185, 129, 0.3)',
+        }
+      }
+    }
+  }
+</script>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: #0f172a;
-    color: #f1f5f9;
+    background-color: #09090b;
+    background-image: 
+      radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+      radial-gradient(at 50% 0%, hsla(225,39%,30%,0.1) 0, transparent 50%), 
+      radial-gradient(at 100% 0%, hsla(339,49%,30%,0.1) 0, transparent 50%);
+    background-attachment: fixed;
+    color: #e4e4e7;
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 1rem;
   }
 
-  .card {
-    background: #1e293b;
-    border-radius: 20px;
-    padding: 32px;
-    width: 100%;
-    max-width: 420px;
-    border: 1px solid #334155;
-  }
-
-  .header {
-    text-align: center;
-    margin-bottom: 28px;
-  }
-
-  .icon {
-    font-size: 36px;
-    margin-bottom: 8px;
-  }
-
-  h1 {
-    font-size: 22px;
-    font-weight: 700;
-    color: #f8fafc;
-  }
-
-  .subtitle {
-    font-size: 13px;
-    color: #64748b;
-    margin-top: 4px;
-  }
-
-  .shift-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: #0f172a;
-    border: 1px solid #334155;
-    border-radius: 20px;
-    padding: 4px 14px;
-    font-size: 12px;
-    color: #94a3b8;
-    margin-top: 10px;
-  }
-
-  .dot { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; }
-
-  .section { margin-bottom: 18px; }
-
-  label {
-    display: block;
-    font-size: 12px;
-    font-weight: 600;
-    color: #94a3b8;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 8px;
-  }
-
-  input[type="time"], input[type="number"], select {
-    width: 100%;
-    background: #0f172a;
-    border: 1px solid #334155;
-    border-radius: 12px;
-    padding: 14px 16px;
-    font-size: 20px;
-    font-weight: 600;
-    color: #f8fafc;
-    outline: none;
-    transition: border-color 0.15s;
+  /* Custom styling for inputs to make them ultra-sleek */
+  input[type="time"] {
     appearance: none;
+    background: #27272a;
+    border: 1px solid #3f3f46;
+    color: #f4f4f5;
+  }
+  input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    opacity: 0.5;
+    cursor: pointer;
+  }
+  input[type="time"]:focus {
+    border-color: #0ea5e9;
+    box-shadow: 0 0 0 2px rgba(14,165,233,0.2);
+    outline: none;
+  }
+
+  /* Range slider styling */
+  input[type=range] {
     -webkit-appearance: none;
+    width: 100%;
+    background: transparent;
   }
-
-  input[type="time"]:focus,
-  input[type="number"]:focus {
-    border-color: #6366f1;
-    box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
-  }
-
-  input[type="number"] { font-size: 16px; }
-
-  .break-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-
-  .break-btn {
-    background: #0f172a;
-    border: 1px solid #334155;
-    border-radius: 10px;
-    padding: 12px;
-    text-align: center;
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: #0ea5e9;
     cursor: pointer;
-    font-size: 13px;
-    font-weight: 600;
-    color: #94a3b8;
-    transition: all 0.15s;
+    margin-top: -8px;
+    box-shadow: 0 0 10px rgba(14,165,233,0.5);
   }
-
-  .break-btn:hover { border-color: #6366f1; color: #a5b4fc; }
-  .break-btn.active { border-color: #6366f1; background: #1e1b4b; color: #a5b4fc; }
-
-  .divider {
-    height: 1px;
-    background: #1e293b;
-    border-top: 1px solid #334155;
-    margin: 24px 0;
-  }
-
-  .result-box {
-    background: #0f172a;
-    border-radius: 16px;
-    padding: 24px;
-    text-align: center;
-    border: 1px solid #334155;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .result-box.ok    { border-color: #22c55e; background: #052e16; }
-  .result-box.warn  { border-color: #f59e0b; background: #1c1008; }
-  .result-box.over  { border-color: #ef4444; background: #1c0a0a; }
-
-  .result-label {
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #64748b;
-    margin-bottom: 6px;
-  }
-
-  .result-time {
-    font-size: 52px;
-    font-weight: 800;
-    letter-spacing: -2px;
-    line-height: 1;
-    color: #f8fafc;
-  }
-
-  .result-box.ok   .result-time { color: #4ade80; }
-  .result-box.warn .result-time { color: #fbbf24; }
-  .result-box.over .result-time { color: #f87171; }
-
-  .result-sub {
-    font-size: 13px;
-    color: #64748b;
-    margin-top: 8px;
-  }
-
-  .stats {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 10px;
-    margin-top: 18px;
-  }
-
-  .stat {
-    background: #0f172a;
-    border: 1px solid #334155;
-    border-radius: 12px;
-    padding: 12px 8px;
-    text-align: center;
-  }
-
-  .stat-val {
-    font-size: 18px;
-    font-weight: 700;
-    color: #f8fafc;
-  }
-
-  .stat-lbl {
-    font-size: 10px;
-    color: #64748b;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-top: 3px;
-  }
-
-  .countdown-bar {
+  input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
     height: 6px;
-    background: #1e293b;
-    border-radius: 99px;
-    overflow: hidden;
-    margin-top: 16px;
-  }
-
-  .countdown-fill {
-    height: 100%;
-    border-radius: 99px;
-    background: #4ade80;
-    transition: width 1s linear, background 0.3s;
-  }
-
-  .status-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    border-radius: 99px;
-    padding: 4px 12px;
-    font-size: 12px;
-    font-weight: 600;
-    margin-top: 12px;
-  }
-
-  .pill-green { background: #14532d; color: #4ade80; }
-  .pill-amber { background: #451a03; color: #fbbf24; }
-  .pill-red   { background: #450a0a; color: #f87171; }
-  .pill-gray  { background: #1e293b; color: #64748b; }
-
-  .late-note {
-    background: #1c1008;
-    border: 1px solid #f59e0b;
-    border-radius: 10px;
-    padding: 10px 14px;
-    font-size: 12px;
-    color: #fbbf24;
-    margin-top: 12px;
-    display: none;
-  }
-
-  .clock-live {
-    font-size: 12px;
-    color: #475569;
-    text-align: center;
-    margin-top: 20px;
-  }
-
-  .clock-live span { color: #94a3b8; font-weight: 600; }
-
-  .settings-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     cursor: pointer;
-    padding: 12px 0 4px;
-    user-select: none;
+    background: #3f3f46;
+    border-radius: 99px;
+  }
+  
+  /* Circular Progress */
+  .progress-ring__circle {
+    transition: stroke-dashoffset 0.8s ease-in-out, stroke 0.3s;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
   }
 
-  .settings-toggle span { font-size: 12px; color: #475569; }
-  .settings-toggle .arrow { transition: transform 0.2s; font-size: 10px; color: #475569; }
-  .settings-toggle.open .arrow { transform: rotate(180deg); }
+  /* Glass panel effect */
+  .glass-panel {
+    background: rgba(24, 24, 27, 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
 
-  .settings-panel { display: none; }
-  .settings-panel.open { display: block; }
+  .smooth-transition {
+    transition: all 0.3s ease;
+  }
 </style>
 </head>
-<body>
+<body class="antialiased selection:bg-primary selection:text-white">
 
-<div class="card">
-  <div class="header">
-    <div class="icon">⏱</div>
-    <h1>Attendance Tracker</h1>
-    <p class="subtitle">Know exactly when to leave</p>
-    <div class="shift-badge">
-      <div class="dot"></div>
-      <span id="shift-display">9:30 AM – 7:00 PM</span>
-    </div>
-  </div>
+<div class="glass-panel rounded-[2rem] w-full max-w-md shadow-2xl relative overflow-hidden flex flex-col">
+  <!-- Glowing background orb -->
+  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-32 bg-primary/20 blur-[60px] pointer-events-none rounded-full" id="bg-glow"></div>
 
-  <div class="section">
-    <label>Login / Arrival time</label>
-    <input type="time" id="login" value="09:30" />
-  </div>
-
-  <div class="section">
-    <label>Break time (minutes)</label>
-    <div class="break-row" style="margin-bottom:10px;">
-      <div class="break-btn active" onclick="setBreak(30, this)">30 min</div>
-      <div class="break-btn" onclick="setBreak(45, this)">45 min</div>
-      <div class="break-btn" onclick="setBreak(60, this)">1 hour</div>
-      <div class="break-btn" onclick="setBreak(0, this)">No break</div>
-    </div>
-    <input type="number" id="break-mins" value="30" min="0" max="120" placeholder="Or type custom minutes" />
-  </div>
-
-  <div class="settings-toggle" onclick="toggleSettings(this)">
-    <span>⚙ Shift settings</span>
-    <span class="arrow">▼</span>
-  </div>
-  <div class="settings-panel">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;">
+  <div class="p-8 pb-6 z-10">
+    <!-- Header -->
+    <div class="flex justify-between items-start mb-6">
       <div>
-        <label>Shift start</label>
-        <input type="time" id="shift-start" value="09:30" />
+        <h1 class="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+          WorkSync
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </h1>
+        <p class="text-sm text-zinc-400 mt-1 font-medium" id="live-date">Loading...</p>
       </div>
-      <div>
-        <label>Shift end</label>
-        <input type="time" id="shift-end" value="19:00" />
+      <div class="text-right">
+        <div class="text-xl font-bold tabular-nums text-white" id="live-time">--:--:--</div>
       </div>
     </div>
-  </div>
 
-  <div class="divider"></div>
-
-  <div class="result-box" id="result-box">
-    <div class="result-label">Leave by</div>
-    <div class="result-time" id="result-time">--:--</div>
-    <div class="result-sub" id="result-sub">Enter your login time above</div>
-    <div class="countdown-bar"><div class="countdown-fill" id="progress" style="width:0%"></div></div>
-    <div id="status-pill"></div>
-  </div>
-
-  <div class="late-note" id="late-note"></div>
-
-  <div class="stats">
-    <div class="stat">
-      <div class="stat-val" id="stat-worked">--</div>
-      <div class="stat-lbl">Worked</div>
+    <!-- Main Circular Visualization -->
+    <div class="relative flex justify-center items-center py-4 my-2">
+      <svg class="w-56 h-56 drop-shadow-xl" viewBox="0 0 200 200">
+        <!-- Background track -->
+        <circle cx="100" cy="100" r="90" stroke="#27272a" stroke-width="12" fill="none" />
+        <!-- Progress track -->
+        <circle 
+          id="progress-circle"
+          class="progress-ring__circle"
+          cx="100" cy="100" r="90" 
+          stroke="#0ea5e9" stroke-width="12" fill="none" stroke-linecap="round" 
+        />
+      </svg>
+      
+      <!-- Center Content -->
+      <div class="absolute flex flex-col items-center text-center mt-2">
+        <span class="text-xs uppercase tracking-widest text-zinc-400 font-semibold mb-1">Target Leave</span>
+        <div id="target-time" class="text-4xl font-extrabold text-white tracking-tighter drop-shadow-md">--:--</div>
+        <div id="status-badge" class="mt-3 px-3 py-1 rounded-full text-xs font-bold bg-zinc-800 text-zinc-300 border border-zinc-700 smooth-transition flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-zinc-400" id="status-dot"></span>
+          <span id="status-text">Pending</span>
+        </div>
+      </div>
     </div>
-    <div class="stat">
-      <div class="stat-val" id="stat-remaining">--</div>
-      <div class="stat-lbl">Remaining</div>
+
+    <!-- Quick Stats Grid -->
+    <div class="grid grid-cols-2 gap-3 mt-4 mb-6">
+      <div class="bg-cardBorder/50 rounded-xl p-3 border border-zinc-800/50 flex flex-col justify-center">
+        <span class="text-[10px] uppercase tracking-wider text-zinc-500 font-bold">Remaining</span>
+        <span class="text-xl font-bold text-white mt-0.5 tabular-nums" id="stat-remaining">--h --m</span>
+      </div>
+      <div class="bg-cardBorder/50 rounded-xl p-3 border border-zinc-800/50 flex flex-col justify-center">
+        <span class="text-[10px] uppercase tracking-wider text-zinc-500 font-bold">Time Logged</span>
+        <span class="text-xl font-bold text-white mt-0.5 tabular-nums" id="stat-worked">--h --m</span>
+      </div>
     </div>
-    <div class="stat">
-      <div class="stat-val" id="stat-late">--</div>
-      <div class="stat-lbl">Late by</div>
+
+    <!-- Core Inputs -->
+    <div class="space-y-4 relative z-10">
+      
+      <!-- Arrival Time -->
+      <div class="relative group">
+        <label class="absolute -top-2 left-3 bg-cardBg px-1 text-[10px] font-bold tracking-wider text-primary uppercase z-10">Arrival Time</label>
+        <div class="relative flex items-center">
+          <svg class="absolute left-3 text-zinc-400 w-5 h-5 pointer-events-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <input type="time" id="arrival-time" value="09:30" class="w-full rounded-xl pl-10 pr-4 py-3 text-lg font-semibold shadow-inner focus:ring-0 smooth-transition" />
+        </div>
+      </div>
+
+      <!-- Break Controls -->
+      <div class="bg-cardBorder/30 rounded-xl p-4 border border-zinc-800/50">
+        <div class="flex justify-between items-center mb-3">
+          <label class="text-xs font-bold tracking-wider text-zinc-400 uppercase">Break Duration</label>
+          <span class="text-sm font-bold text-white bg-zinc-800 px-2 py-0.5 rounded-md border border-zinc-700" id="break-display">30m</span>
+        </div>
+        
+        <input type="range" id="break-slider" min="0" max="120" step="5" value="30" class="mb-4">
+        
+        <div class="flex gap-2">
+          <button class="break-chip flex-1 py-1.5 rounded-lg text-xs font-semibold bg-zinc-800 text-zinc-300 border border-zinc-700 hover:bg-zinc-700 hover:text-white smooth-transition" data-val="0">None</button>
+          <button class="break-chip flex-1 py-1.5 rounded-lg text-xs font-semibold bg-primary text-white border border-primary shadow-[0_0_10px_rgba(14,165,233,0.3)] smooth-transition active" data-val="30">30m</button>
+          <button class="break-chip flex-1 py-1.5 rounded-lg text-xs font-semibold bg-zinc-800 text-zinc-300 border border-zinc-700 hover:bg-zinc-700 hover:text-white smooth-transition" data-val="60">1h</button>
+        </div>
+      </div>
+      
+      <!-- Accordion for Standard Shift Settings -->
+      <details class="group bg-cardBorder/30 rounded-xl border border-zinc-800/50 overflow-hidden">
+        <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-4 text-sm text-zinc-300 hover:text-white smooth-transition">
+          <div class="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+            Shift Rules
+          </div>
+          <span class="transition group-open:rotate-180">
+            <svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="20"><polyline points="6 9 12 15 18 9"/></svg>
+          </span>
+        </summary>
+        <div class="p-4 pt-0 text-zinc-400 group-open:animate-fadeIn grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-[10px] font-bold uppercase tracking-wider mb-1 block">Start Time</label>
+            <input type="time" id="shift-start" value="09:30" class="w-full rounded-lg px-3 py-2 text-sm" />
+          </div>
+          <div>
+            <label class="text-[10px] font-bold uppercase tracking-wider mb-1 block">End Time</label>
+            <input type="time" id="shift-end" value="19:00" class="w-full rounded-lg px-3 py-2 text-sm" />
+          </div>
+        </div>
+      </details>
+
+      <!-- Late Warning Alert (Hidden by default) -->
+      <div id="alert-late" class="hidden items-center p-3 rounded-xl bg-warning/10 border border-warning/20 text-warning text-xs font-semibold">
+        <svg class="w-4 h-4 mr-2 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span id="alert-late-text">Late arrival detected. Logout time adjusted.</span>
+      </div>
+
     </div>
   </div>
-
-  <div class="clock-live">Current time: <span id="live-clock"></span></div>
 </div>
 
 <script>
-  function toMins(hhmm) {
-    const [h, m] = hhmm.split(':').map(Number);
+  // Elements
+  const elTime = document.getElementById('live-time');
+  const elDate = document.getElementById('live-date');
+  const elArrival = document.getElementById('arrival-time');
+  const elStart = document.getElementById('shift-start');
+  const elEnd = document.getElementById('shift-end');
+  const elBreakSlider = document.getElementById('break-slider');
+  const elBreakDisplay = document.getElementById('break-display');
+  const breakChips = document.querySelectorAll('.break-chip');
+  const elTargetTime = document.getElementById('target-time');
+  const elRemaining = document.getElementById('stat-remaining');
+  const elWorked = document.getElementById('stat-worked');
+  const elProgress = document.getElementById('progress-circle');
+  const elStatusBadge = document.getElementById('status-badge');
+  const elStatusText = document.getElementById('status-text');
+  const elStatusDot = document.getElementById('status-dot');
+  const elGlow = document.getElementById('bg-glow');
+  const elAlertLate = document.getElementById('alert-late');
+  const elAlertLateText = document.getElementById('alert-late-text');
+
+  // SVG Circle Logic
+  const radius = elProgress.r.baseVal.value;
+  const circumference = radius * 2 * Math.PI;
+  elProgress.style.strokeDasharray = `${circumference} ${circumference}`;
+
+  // Helper Functions
+  function timeToMins(timeStr) {
+    if (!timeStr) return 0;
+    const [h, m] = timeStr.split(':').map(Number);
     return h * 60 + m;
   }
 
-  function toHHMM(mins) {
-    const h = Math.floor(((mins % 1440) + 1440) % 1440 / 60);
-    const m = Math.floor(((mins % 1440) + 1440) % 1440 % 60);
+  function minsToTimeStr(mins) {
+    const totalMins = ((mins % 1440) + 1440) % 1440;
+    const h = Math.floor(totalMins / 60);
+    const m = Math.floor(totalMins % 60);
     const ampm = h >= 12 ? 'PM' : 'AM';
     const h12 = h % 12 || 12;
-    return `${h12}:${String(m).padStart(2,'0')} ${ampm}`;
+    return `${h12}:${m.toString().padStart(2, '0')} ${ampm}`;
   }
 
-  function toHHMMShort(totalMins) {
-    if (totalMins < 0) totalMins = 0;
-    const h = Math.floor(totalMins / 60);
-    const m = totalMins % 60;
+  function formatDuration(mins) {
+    if (mins <= 0) return '0m';
+    const h = Math.floor(mins / 60);
+    const m = Math.floor(mins % 60);
     if (h === 0) return `${m}m`;
-    return m === 0 ? `${h}h` : `${h}h ${m}m`;
+    if (m === 0) return `${h}h`;
+    return `${h}h ${m}m`;
   }
 
-  function setBreak(val, el) {
-    document.getElementById('break-mins').value = val;
-    document.querySelectorAll('.break-btn').forEach(b => b.classList.remove('active'));
-    el.classList.add('active');
-    calculate();
+  function getNowMins() {
+    const now = new Date();
+    return now.getHours() * 60 + now.getMinutes();
   }
 
-  function toggleSettings(el) {
-    el.classList.toggle('open');
-    document.querySelector('.settings-panel').classList.toggle('open');
-    updateShiftBadge();
-  }
-
-  function updateShiftBadge() {
-    const s = document.getElementById('shift-start').value;
-    const e = document.getElementById('shift-end').value;
-    document.getElementById('shift-display').textContent = `${toHHMM(toMins(s))} – ${toHHMM(toMins(e))}`;
-  }
-
-  function nowMins() {
-    const n = new Date();
-    return n.getHours() * 60 + n.getMinutes();
-  }
-
+  // Core Calculator
   function calculate() {
-    const loginVal = document.getElementById('login').value;
-    const breakVal = parseInt(document.getElementById('break-mins').value) || 0;
-    const shiftStart = document.getElementById('shift-start').value;
-    const shiftEnd = document.getElementById('shift-end').value;
+    if (!elArrival.value) return;
 
-    updateShiftBadge();
+    const arrivalMins = timeToMins(elArrival.value);
+    const startMins = timeToMins(elStart.value);
+    const endMins = timeToMins(elEnd.value);
+    const breakMins = parseInt(elBreakSlider.value) || 0;
+    const nowMins = getNowMins();
 
-    if (!loginVal) return;
+    const shiftDuration = endMins - startMins;
+    
+    // Calculate lateness and adjust target leave time
+    const lateBy = Math.max(0, arrivalMins - startMins);
+    const requiredLeaveMins = endMins + lateBy; 
+    
+    // Stats calculation
+    const totalRequiredWorkTime = requiredLeaveMins - arrivalMins; // total span
+    let timeLoggedRaw = nowMins - arrivalMins - breakMins;
+    if (timeLoggedRaw < 0) timeLoggedRaw = 0; // if break is larger than time logged
+    
+    const timeRemaining = Math.max(0, requiredLeaveMins - nowMins);
+    const progressPercent = Math.min(100, Math.max(0, ((nowMins - arrivalMins) / totalRequiredWorkTime) * 100));
 
-    const loginMins    = toMins(loginVal);
-    const startMins    = toMins(shiftStart);
-    const endMins      = toMins(shiftEnd);
-    const shiftDur     = endMins - startMins;
-    const lateMins     = Math.max(0, loginMins - startMins);
-    const requiredLogout = endMins + lateMins;
-    const current      = nowMins();
-
-    const workedRaw  = Math.max(0, current - loginMins - breakVal);
-    const workedMins = workedRaw > shiftDur ? shiftDur : workedRaw;
-    const remainingMins = Math.max(0, requiredLogout - current);
-    const pct = Math.min(100, Math.round((current - loginMins) / (requiredLogout - loginMins) * 100));
-
-    document.getElementById('result-time').textContent = toHHMM(requiredLogout);
-    document.getElementById('stat-worked').textContent = toHHMMShort(Math.max(0, current - loginMins - breakVal));
-    document.getElementById('stat-remaining').textContent = remainingMins > 0 ? toHHMMShort(remainingMins) : 'Done!';
-    document.getElementById('stat-late').textContent = lateMins > 0 ? toHHMMShort(lateMins) : 'On time';
-
-    const box = document.getElementById('result-box');
-    const fill = document.getElementById('progress');
-    const pill = document.getElementById('status-pill');
-    const lateNote = document.getElementById('late-note');
-    const sub = document.getElementById('result-sub');
-
-    box.className = 'result-box';
-    if (current >= requiredLogout) {
-      box.classList.add('over');
-      fill.style.background = '#4ade80';
-      fill.style.width = '100%';
-      pill.innerHTML = '<span class="status-pill pill-green">✓ You can leave now</span>';
-      sub.textContent = `You have completed your shift!`;
-    } else if (remainingMins <= 30) {
-      box.classList.add('warn');
-      fill.style.background = '#fbbf24';
-      fill.style.width = pct + '%';
-      pill.innerHTML = '<span class="status-pill pill-amber">⏳ Almost done</span>';
-      sub.textContent = `${toHHMMShort(remainingMins)} more to go`;
+    // Update DOM
+    elTargetTime.innerText = minsToTimeStr(requiredLeaveMins);
+    elWorked.innerText = formatDuration(timeLoggedRaw);
+    
+    // Lateness Alert
+    if (lateBy > 0) {
+      elAlertLate.classList.remove('hidden');
+      elAlertLate.classList.add('flex');
+      elAlertLateText.innerText = `Arrived ${formatDuration(lateBy)} late. Target extended to ${minsToTimeStr(requiredLeaveMins)}.`;
     } else {
-      box.classList.add('ok');
-      fill.style.background = '#4ade80';
-      fill.style.width = pct + '%';
-      pill.innerHTML = '<span class="status-pill pill-green">Working</span>';
-      sub.textContent = `${toHHMMShort(remainingMins)} remaining`;
+      elAlertLate.classList.add('hidden');
+      elAlertLate.classList.remove('flex');
     }
 
-    if (lateMins > 0) {
-      lateNote.style.display = 'block';
-      lateNote.textContent = `⚠ You arrived ${toHHMMShort(lateMins)} late (shift starts ${toHHMM(startMins)}). Your logout moved to ${toHHMM(requiredLogout)}.`;
+    // Save current settings to LocalStorage
+    saveSettings();
+
+    // Status logic (Colors & Text)
+    if (nowMins >= requiredLeaveMins) {
+      // Overtime / Done
+      const overtime = nowMins - requiredLeaveMins;
+      elRemaining.innerText = `+${formatDuration(overtime)}`;
+      elRemaining.classList.add('text-success');
+      
+      updateStatusUI('success', 'Ready to Leave', '#10b981');
+      setProgress(100, '#10b981');
+    } else if (timeRemaining <= 30) {
+      // Warning / Closing in
+      elRemaining.innerText = formatDuration(timeRemaining);
+      elRemaining.classList.remove('text-success');
+      
+      updateStatusUI('warning', 'Wrapping Up', '#f59e0b');
+      setProgress(progressPercent, '#f59e0b');
     } else {
-      lateNote.style.display = 'none';
+      // Standard working
+      elRemaining.innerText = formatDuration(timeRemaining);
+      elRemaining.classList.remove('text-success');
+      
+      updateStatusUI('primary', 'In Progress', '#0ea5e9');
+      setProgress(progressPercent, '#0ea5e9');
     }
   }
 
-  function updateClock() {
-    const n = new Date();
-    const h = n.getHours() % 12 || 12;
-    const m = String(n.getMinutes()).padStart(2, '0');
-    const s = String(n.getSeconds()).padStart(2, '0');
-    const ap = n.getHours() >= 12 ? 'PM' : 'AM';
-    document.getElementById('live-clock').textContent = `${h}:${m}:${s} ${ap}`;
-    calculate();
+  function setProgress(percent, color) {
+    const offset = circumference - (percent / 100) * circumference;
+    elProgress.style.strokeDashoffset = offset;
+    elProgress.style.stroke = color;
   }
 
-  document.getElementById('login').addEventListener('change', calculate);
-  document.getElementById('break-mins').addEventListener('input', calculate);
-  document.getElementById('shift-start').addEventListener('change', calculate);
-  document.getElementById('shift-end').addEventListener('change', calculate);
+  function updateStatusUI(theme, text, hex) {
+    // Reset classes
+    elStatusBadge.className = `mt-3 px-3 py-1 rounded-full text-xs font-bold border smooth-transition flex items-center gap-1.5`;
+    
+    if(theme === 'success') {
+      elStatusBadge.classList.add('bg-success/10', 'text-success', 'border-success/20');
+      elStatusDot.style.backgroundColor = hex;
+      elStatusDot.classList.add('animate-pulse');
+      elGlow.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+    } else if (theme === 'warning') {
+      elStatusBadge.classList.add('bg-warning/10', 'text-warning', 'border-warning/20');
+      elStatusDot.style.backgroundColor = hex;
+      elStatusDot.classList.remove('animate-pulse');
+      elGlow.style.backgroundColor = 'rgba(245, 158, 11, 0.15)';
+    } else {
+      elStatusBadge.classList.add('bg-primary/10', 'text-primary', 'border-primary/20');
+      elStatusDot.style.backgroundColor = hex;
+      elStatusDot.classList.remove('animate-pulse');
+      elGlow.style.backgroundColor = 'rgba(14, 165, 233, 0.2)';
+    }
+    elStatusText.innerText = text;
+  }
 
-  setInterval(updateClock, 1000);
-  updateClock();
+  // Local Storage persistence
+  function saveSettings() {
+    localStorage.setItem('ws_arrival', elArrival.value);
+    localStorage.setItem('ws_start', elStart.value);
+    localStorage.setItem('ws_end', elEnd.value);
+    localStorage.setItem('ws_break', elBreakSlider.value);
+  }
+
+  function loadSettings() {
+    const savedArrival = localStorage.getItem('ws_arrival');
+    const savedStart = localStorage.getItem('ws_start');
+    const savedEnd = localStorage.getItem('ws_end');
+    const savedBreak = localStorage.getItem('ws_break');
+
+    if (savedArrival) elArrival.value = savedArrival;
+    if (savedStart) elStart.value = savedStart;
+    if (savedEnd) elEnd.value = savedEnd;
+    if (savedBreak) {
+      elBreakSlider.value = savedBreak;
+      // Trigger input event to update the UI chips and break display
+      elBreakSlider.dispatchEvent(new Event('input'));
+    }
+  }
+
+  // Live Clocks
+  function initClocks() {
+    setInterval(() => {
+      const now = new Date();
+      // Time format
+      const h = now.getHours() % 12 || 12;
+      const m = now.getMinutes().toString().padStart(2, '0');
+      const s = now.getSeconds().toString().padStart(2, '0');
+      const ampm = now.getHours() >= 12 ? 'PM' : 'AM';
+      elTime.innerHTML = `${h}:${m}<span class="text-zinc-500 text-base font-medium">:${s} ${ampm}</span>`;
+      
+      // Date format
+      const options = { weekday: 'long', month: 'short', day: 'numeric' };
+      elDate.innerText = now.toLocaleDateString('en-US', options);
+
+      // Re-calculate progress every minute
+      if(now.getSeconds() === 0) calculate();
+    }, 1000);
+  }
+
+  // Event Listeners
+  [elArrival, elStart, elEnd, elBreakSlider].forEach(el => {
+    el.addEventListener('input', calculate);
+  });
+
+  // Break Slider & Chips Sync
+  elBreakSlider.addEventListener('input', (e) => {
+    const val = e.target.value;
+    elBreakDisplay.innerText = val > 0 ? (val >= 60 ? (val % 60 === 0 ? `${val/60}h` : `${Math.floor(val/60)}h ${val%60}m`) : `${val}m`) : 'None';
+    
+    // Sync chips
+    breakChips.forEach(chip => {
+      if(chip.dataset.val === val) {
+        chip.className = 'break-chip flex-1 py-1.5 rounded-lg text-xs font-semibold bg-primary text-white border border-primary shadow-[0_0_10px_rgba(14,165,233,0.3)] smooth-transition active';
+      } else {
+        chip.className = 'break-chip flex-1 py-1.5 rounded-lg text-xs font-semibold bg-zinc-800 text-zinc-300 border border-zinc-700 hover:bg-zinc-700 hover:text-white smooth-transition';
+      }
+    });
+  });
+
+  breakChips.forEach(chip => {
+    chip.addEventListener('click', (e) => {
+      elBreakSlider.value = e.target.dataset.val;
+      // Trigger slider input event to run sync and calculate
+      elBreakSlider.dispatchEvent(new Event('input')); 
+    });
+  });
+
+  // Boot
+  initClocks();
+
+  // Load saved settings
+  loadSettings();
+
+  // Call immediately to set initial time
+  const initTime = new Date();
+  elTime.innerHTML = `${initTime.getHours() % 12 || 12}:${initTime.getMinutes().toString().padStart(2, '0')}<span class="text-zinc-500 text-base font-medium">:${initTime.getSeconds().toString().padStart(2, '0')} ${initTime.getHours() >= 12 ? 'PM' : 'AM'}</span>`;
+  elDate.innerText = initTime.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+  
+  // Set initial animations
+  setTimeout(calculate, 100);
+
 </script>
 </body>
 </html>
