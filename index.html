@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attendance Tracker</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #0f172a;
+    color: #f1f5f9;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .card {
+    background: #1e293b;
+    border-radius: 20px;
+    padding: 32px;
+    width: 100%;
+    max-width: 420px;
+    border: 1px solid #334155;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .icon {
+    font-size: 36px;
+    margin-bottom: 8px;
+  }
+
+  h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #f8fafc;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: #64748b;
+    margin-top: 4px;
+  }
+
+  .shift-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 12px;
+    color: #94a3b8;
+    margin-top: 10px;
+  }
+
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; }
+
+  .section { margin-bottom: 18px; }
+
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+  }
+
+  input[type="time"], input[type="number"], select {
+    width: 100%;
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #f8fafc;
+    outline: none;
+    transition: border-color 0.15s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  input[type="time"]:focus,
+  input[type="number"]:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+  }
+
+  input[type="number"] { font-size: 16px; }
+
+  .break-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .break-btn {
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    padding: 12px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: #94a3b8;
+    transition: all 0.15s;
+  }
+
+  .break-btn:hover { border-color: #6366f1; color: #a5b4fc; }
+  .break-btn.active { border-color: #6366f1; background: #1e1b4b; color: #a5b4fc; }
+
+  .divider {
+    height: 1px;
+    background: #1e293b;
+    border-top: 1px solid #334155;
+    margin: 24px 0;
+  }
+
+  .result-box {
+    background: #0f172a;
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+    border: 1px solid #334155;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .result-box.ok    { border-color: #22c55e; background: #052e16; }
+  .result-box.warn  { border-color: #f59e0b; background: #1c1008; }
+  .result-box.over  { border-color: #ef4444; background: #1c0a0a; }
+
+  .result-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #64748b;
+    margin-bottom: 6px;
+  }
+
+  .result-time {
+    font-size: 52px;
+    font-weight: 800;
+    letter-spacing: -2px;
+    line-height: 1;
+    color: #f8fafc;
+  }
+
+  .result-box.ok   .result-time { color: #4ade80; }
+  .result-box.warn .result-time { color: #fbbf24; }
+  .result-box.over .result-time { color: #f87171; }
+
+  .result-sub {
+    font-size: 13px;
+    color: #64748b;
+    margin-top: 8px;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .stat {
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 12px 8px;
+    text-align: center;
+  }
+
+  .stat-val {
+    font-size: 18px;
+    font-weight: 700;
+    color: #f8fafc;
+  }
+
+  .stat-lbl {
+    font-size: 10px;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 3px;
+  }
+
+  .countdown-bar {
+    height: 6px;
+    background: #1e293b;
+    border-radius: 99px;
+    overflow: hidden;
+    margin-top: 16px;
+  }
+
+  .countdown-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: #4ade80;
+    transition: width 1s linear, background 0.3s;
+  }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 99px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 12px;
+  }
+
+  .pill-green { background: #14532d; color: #4ade80; }
+  .pill-amber { background: #451a03; color: #fbbf24; }
+  .pill-red   { background: #450a0a; color: #f87171; }
+  .pill-gray  { background: #1e293b; color: #64748b; }
+
+  .late-note {
+    background: #1c1008;
+    border: 1px solid #f59e0b;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: #fbbf24;
+    margin-top: 12px;
+    display: none;
+  }
+
+  .clock-live {
+    font-size: 12px;
+    color: #475569;
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  .clock-live span { color: #94a3b8; font-weight: 600; }
+
+  .settings-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    padding: 12px 0 4px;
+    user-select: none;
+  }
+
+  .settings-toggle span { font-size: 12px; color: #475569; }
+  .settings-toggle .arrow { transition: transform 0.2s; font-size: 10px; color: #475569; }
+  .settings-toggle.open .arrow { transform: rotate(180deg); }
+
+  .settings-panel { display: none; }
+  .settings-panel.open { display: block; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="header">
+    <div class="icon">⏱</div>
+    <h1>Attendance Tracker</h1>
+    <p class="subtitle">Know exactly when to leave</p>
+    <div class="shift-badge">
+      <div class="dot"></div>
+      <span id="shift-display">9:30 AM – 7:00 PM</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <label>Login / Arrival time</label>
+    <input type="time" id="login" value="09:30" />
+  </div>
+
+  <div class="section">
+    <label>Break time (minutes)</label>
+    <div class="break-row" style="margin-bottom:10px;">
+      <div class="break-btn active" onclick="setBreak(30, this)">30 min</div>
+      <div class="break-btn" onclick="setBreak(45, this)">45 min</div>
+      <div class="break-btn" onclick="setBreak(60, this)">1 hour</div>
+      <div class="break-btn" onclick="setBreak(0, this)">No break</div>
+    </div>
+    <input type="number" id="break-mins" value="30" min="0" max="120" placeholder="Or type custom minutes" />
+  </div>
+
+  <div class="settings-toggle" onclick="toggleSettings(this)">
+    <span>⚙ Shift settings</span>
+    <span class="arrow">▼</span>
+  </div>
+  <div class="settings-panel">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;">
+      <div>
+        <label>Shift start</label>
+        <input type="time" id="shift-start" value="09:30" />
+      </div>
+      <div>
+        <label>Shift end</label>
+        <input type="time" id="shift-end" value="19:00" />
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="result-box" id="result-box">
+    <div class="result-label">Leave by</div>
+    <div class="result-time" id="result-time">--:--</div>
+    <div class="result-sub" id="result-sub">Enter your login time above</div>
+    <div class="countdown-bar"><div class="countdown-fill" id="progress" style="width:0%"></div></div>
+    <div id="status-pill"></div>
+  </div>
+
+  <div class="late-note" id="late-note"></div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-val" id="stat-worked">--</div>
+      <div class="stat-lbl">Worked</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="stat-remaining">--</div>
+      <div class="stat-lbl">Remaining</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="stat-late">--</div>
+      <div class="stat-lbl">Late by</div>
+    </div>
+  </div>
+
+  <div class="clock-live">Current time: <span id="live-clock"></span></div>
+</div>
+
+<script>
+  function toMins(hhmm) {
+    const [h, m] = hhmm.split(':').map(Number);
+    return h * 60 + m;
+  }
+
+  function toHHMM(mins) {
+    const h = Math.floor(((mins % 1440) + 1440) % 1440 / 60);
+    const m = Math.floor(((mins % 1440) + 1440) % 1440 % 60);
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    const h12 = h % 12 || 12;
+    return `${h12}:${String(m).padStart(2,'0')} ${ampm}`;
+  }
+
+  function toHHMMShort(totalMins) {
+    if (totalMins < 0) totalMins = 0;
+    const h = Math.floor(totalMins / 60);
+    const m = totalMins % 60;
+    if (h === 0) return `${m}m`;
+    return m === 0 ? `${h}h` : `${h}h ${m}m`;
+  }
+
+  function setBreak(val, el) {
+    document.getElementById('break-mins').value = val;
+    document.querySelectorAll('.break-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    calculate();
+  }
+
+  function toggleSettings(el) {
+    el.classList.toggle('open');
+    document.querySelector('.settings-panel').classList.toggle('open');
+    updateShiftBadge();
+  }
+
+  function updateShiftBadge() {
+    const s = document.getElementById('shift-start').value;
+    const e = document.getElementById('shift-end').value;
+    document.getElementById('shift-display').textContent = `${toHHMM(toMins(s))} – ${toHHMM(toMins(e))}`;
+  }
+
+  function nowMins() {
+    const n = new Date();
+    return n.getHours() * 60 + n.getMinutes();
+  }
+
+  function calculate() {
+    const loginVal = document.getElementById('login').value;
+    const breakVal = parseInt(document.getElementById('break-mins').value) || 0;
+    const shiftStart = document.getElementById('shift-start').value;
+    const shiftEnd = document.getElementById('shift-end').value;
+
+    updateShiftBadge();
+
+    if (!loginVal) return;
+
+    const loginMins    = toMins(loginVal);
+    const startMins    = toMins(shiftStart);
+    const endMins      = toMins(shiftEnd);
+    const shiftDur     = endMins - startMins;
+    const lateMins     = Math.max(0, loginMins - startMins);
+    const requiredLogout = endMins + lateMins;
+    const current      = nowMins();
+
+    const workedRaw  = Math.max(0, current - loginMins - breakVal);
+    const workedMins = workedRaw > shiftDur ? shiftDur : workedRaw;
+    const remainingMins = Math.max(0, requiredLogout - current);
+    const pct = Math.min(100, Math.round((current - loginMins) / (requiredLogout - loginMins) * 100));
+
+    document.getElementById('result-time').textContent = toHHMM(requiredLogout);
+    document.getElementById('stat-worked').textContent = toHHMMShort(Math.max(0, current - loginMins - breakVal));
+    document.getElementById('stat-remaining').textContent = remainingMins > 0 ? toHHMMShort(remainingMins) : 'Done!';
+    document.getElementById('stat-late').textContent = lateMins > 0 ? toHHMMShort(lateMins) : 'On time';
+
+    const box = document.getElementById('result-box');
+    const fill = document.getElementById('progress');
+    const pill = document.getElementById('status-pill');
+    const lateNote = document.getElementById('late-note');
+    const sub = document.getElementById('result-sub');
+
+    box.className = 'result-box';
+    if (current >= requiredLogout) {
+      box.classList.add('over');
+      fill.style.background = '#4ade80';
+      fill.style.width = '100%';
+      pill.innerHTML = '<span class="status-pill pill-green">✓ You can leave now</span>';
+      sub.textContent = `You have completed your shift!`;
+    } else if (remainingMins <= 30) {
+      box.classList.add('warn');
+      fill.style.background = '#fbbf24';
+      fill.style.width = pct + '%';
+      pill.innerHTML = '<span class="status-pill pill-amber">⏳ Almost done</span>';
+      sub.textContent = `${toHHMMShort(remainingMins)} more to go`;
+    } else {
+      box.classList.add('ok');
+      fill.style.background = '#4ade80';
+      fill.style.width = pct + '%';
+      pill.innerHTML = '<span class="status-pill pill-green">Working</span>';
+      sub.textContent = `${toHHMMShort(remainingMins)} remaining`;
+    }
+
+    if (lateMins > 0) {
+      lateNote.style.display = 'block';
+      lateNote.textContent = `⚠ You arrived ${toHHMMShort(lateMins)} late (shift starts ${toHHMM(startMins)}). Your logout moved to ${toHHMM(requiredLogout)}.`;
+    } else {
+      lateNote.style.display = 'none';
+    }
+  }
+
+  function updateClock() {
+    const n = new Date();
+    const h = n.getHours() % 12 || 12;
+    const m = String(n.getMinutes()).padStart(2, '0');
+    const s = String(n.getSeconds()).padStart(2, '0');
+    const ap = n.getHours() >= 12 ? 'PM' : 'AM';
+    document.getElementById('live-clock').textContent = `${h}:${m}:${s} ${ap}`;
+    calculate();
+  }
+
+  document.getElementById('login').addEventListener('change', calculate);
+  document.getElementById('break-mins').addEventListener('input', calculate);
+  document.getElementById('shift-start').addEventListener('change', calculate);
+  document.getElementById('shift-end').addEventListener('change', calculate);
+
+  setInterval(updateClock, 1000);
+  updateClock();
+</script>
+</body>
+</html>
